@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Figure Skating Tricktionary Challenge</title>
+    <style>
+        body {
+            font-family: sans-serif;
+            background-color: #eccfcf;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+        }
+
+        .container {
+            background-color: #f1e7e7;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+
+        h1 {
+            color: #333;
+            margin-bottom: 20px;
+        }
+
+        .visual-area {
+            margin-bottom: 20px;
+        }
+
+        #trick-visual {
+            max-width: 300px;
+            height: auto;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+
+        .options-area {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .option {
+            padding: 10px 20px;
+            background-color: #7dd0f1;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+
+        .option:hover {
+            background-color: #0056b3;
+        }
+
+        .feedback-area {
+            margin-top: 20px;
+            font-weight: bold;
+        }
+
+        .feedback-area.correct {
+            color: green;
+        }
+
+        .feedback-area.incorrect {
+            color: red;
+        }
+
+        #next-button {
+            padding: 10px 20px;
+            background-color: #153d6f;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            margin-top: 20px;
+        }
+
+        #next-button:hover {
+            background-color: #1e7e34;
+        }
+
+        .titlecolor {color: #134881;
+        font-style: italic;}
+
+        .timefont {
+            color: red;
+            font-style: italic;
+            font-weight: bold;
+            font-size: 25px;
+        }
+
+        .scorefont {
+            color: rgb(22, 184, 22);
+            font-style: italic;
+            font-weight: bold;
+            font-size: 20px;
+        }
+
+        .scoreposition {
+            float: right;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div id="score" class="scorefont scoreposition">Score: 0</div>
+        <h1 class="titlecolor">Figure Skating Tricktionary Challenge</h1>
+        <div id="timer" class="timefont">Time: 10</div> <br>
+        <div class="visual-area">
+            <img id="trick-visual" src="placeholder.gif" alt="Figure Skating Trick">
+        </div>
+
+        <div class="options-area">
+            <button class="option" data-answer="false">Option A</button>
+            <button class="option" data-answer="false">Option B</button>
+            <button class="option" data-answer="false">Option C</button>
+            <button class="option" data-answer="false">Option D</button>
+        </div>
+
+        <div class="feedback-area" id="feedback"></div>
+
+        <button id="next-button">Next Trick</button>
+    </div>
+
+    <script>
+        let score = 0;
+        const scoreDisplay = document.getElementById('score');
+        const trickVisual = document.getElementById('trick-visual');
+        const options = document.querySelectorAll('.option');
+        const feedbackArea = document.getElementById('feedback');
+        const nextButton = document.getElementById('next-button');
+        const timerDisplay = document.getElementById('timer'); //Get the timer display element (make sure you have this in your HTML)
+
+        const tricks = [
+            {
+                name: "Axel",
+                visual: "assets/img/axel_gif.gif", // Replace with actual image/GIF path
+                choices: ["Salchow", "Axel", "Lutz", "Flip"],
+                correctAnswer: "Axel"
+            },
+            {
+                name: "Salchow",
+                visual: "assets/img/quad-salchow.gif", // Replace with actual image/GIF path
+                choices: ["Toe Loop", "Salchow", "Euler", "Loop"],
+                correctAnswer: "Salchow"
+            },
+            {
+                name: "Lutz",
+                visual: "assets/img/lutz.gif", 
+                choices: ["Salchow", "Axel", "Lutz", "Flip"],
+                correctAnswer: "Lutz"
+            },
+            {
+                name: "Toe Loop",
+                visual: "assets/img/toeloop.webp", 
+                choices: ["Toe Loop", "Salchow", "Euler", "Loop"],
+                correctAnswer: "Toe Loop"
+            },
+            {
+                name: "Quad-Axel",
+                visual: "assets/img/quad_axel.gif", 
+                choices: ["Salchow", "Quad Axel", "Lutz", "Flip"],
+                correctAnswer: "Quad Axel"
+            },
+            {
+                name: "Twizzles",
+                visual: "assets/img/twizzles.gif",
+                choices: ["Salchow", "One Foot Step Sequence", "Twizzles", "Rotational Lift"],
+                correctAnswer: "Twizzles"
+            },
+            {
+                name: "Triple Twist",
+                visual: "assets/img/triple_twist.gif", // Replace with actual image/GIF path
+                choices: ["Rotational Lift", "Twizzles", "Stationary Lift", "Triple Twist"],
+                correctAnswer: "Triple Twist"
+            },
+            // Add more tricks here!
+        ];
+
+        let currentTrickIndex = 0;
+        let timeLeft = 10; //Set the initial time for each question (in seconds) - adjust as needed
+        let timerInterval; //Variable to hold the interval ID
+
+        function startTimer() {
+            timeLeft = 10; // Reset the time for the new question
+            timerDisplay.textContent = `Time: ${timeLeft}`; // Display initial time
+
+            // Clear any existing timer interval
+            clearInterval(timerInterval);
+
+            // Set up a new timer interval
+            timerInterval = setInterval(() => {
+                timeLeft--;
+                timerDisplay.textContent = `Time: ${timeLeft}`;
+
+                if (timeLeft <= 0) {
+                    clearInterval(timerInterval); // Stop the timer
+                    feedbackArea.textContent = `Time's up! The answer was ${tricks[currentTrickIndex].correctAnswer}.`;
+                    feedbackArea.className = "feedback-area incorrect";
+                    options.forEach(button => button.disabled = true); // Disable buttons
+                }
+            }, 1000); // Run the function every 1000 milliseconds (1 second)
+}
+
+        function loadTrick() {
+            const currentTrick = tricks[currentTrickIndex];
+            trickVisual.src = currentTrick.visual;
+            trickVisual.alt = currentTrick.name;
+
+            // Shuffle the choices
+            const shuffledChoices = [...currentTrick.choices].sort(() => Math.random() - 0.5);
+
+            options.forEach((button, index) => {
+                button.textContent = shuffledChoices[index];
+                button.dataset.answer = (shuffledChoices[index] === currentTrick.correctAnswer);
+                button.disabled = false;
+                button.classList.remove('correct', 'incorrect');
+            });
+
+            feedbackArea.textContent = "";
+            startTimer();
+        }
+
+        function checkAnswer(selectedButton) {
+            clearInterval (timerInterval); //Stop the timer when an answer is clicked
+            const isCorrect = selectedButton.dataset.answer === "true";
+
+            if (isCorrect) {
+                feedbackArea.textContent = "Correct!" ; 
+                feedbackArea.className = "feedback-area correct" ;
+                score++; //Increment the score for a correct answer//  
+            } else {
+                feedbackArea.textContent = `Not quite! The answer was ${tricks[currentTrickIndex].correctAnswer}.`;
+                feedbackArea.className = "feedback-area incorrect";
+                score--;
+            }   
+
+            scoreDisplay.textContent = `Score: ${score}`; // Update the score display
+
+            options.forEach(button => {
+                button.disabled = true; // Disable buttons after an answer is chosen
+                if (button.dataset.answer === "true") {
+                    button.classList.add('correct');
+                } else if (button === selectedButton) {
+                    button.classList.add('incorrect');
+                }
+            });
+        }
+
+        options.forEach(option => {
+            option.addEventListener('click', function() {
+                checkAnswer(this);
+            });
+        });
+
+        nextButton.addEventListener('click', () => {
+            currentTrickIndex = (currentTrickIndex + 1) % tricks.length; // Loop through tricks
+            loadTrick();
+        });
+
+        // Initial load
+        loadTrick();
+    </script>
+</body>
+</html>
