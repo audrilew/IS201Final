@@ -124,9 +124,9 @@
 </head>
 <body>
     <div class="container">
-        <div id="score" class="scorefont scoreposition">Score: 0</div>
+        <div id="score" class="scorefont scoreposition">🏆 Score: 0</div>
         <div id="lives" class="livesfont livesposition">Lives: 3</div>
-        <h1 class="titlecolor">Figure Skating Tricktionary Challenge</h1>
+        <h1 class="titlecolor">⛸️ Figure Skating Tricktionary Challenge!!! ⛸️</h1>
         <div id="timer" class="timefont">Time: 10</div> <br>
         <div class="visual-area">
             <img id="trick-visual" src="placeholder.gif" alt="Figure Skating Trick">
@@ -237,7 +237,7 @@
 
                 if (timeLeft <= 0) {
                     clearInterval(timerInterval); // Stop the timer
-                    feedbackArea.textContent = `Time's up! The answer was ${tricks[currentTrickIndex].correctAnswer}.`;
+                    feedbackArea.textContent = `⏰ Time's up! The answer was ${tricks[currentTrickIndex].correctAnswer}.`;
                     feedbackArea.className = "feedback-area incorrect";
                     options.forEach(button => button.disabled = true); // Disable buttons
                 }
