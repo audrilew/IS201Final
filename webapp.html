@@ -88,7 +88,7 @@
             background-color: #1e7e34;
         }
 
-        .titlecolor {color: #134881;
+        .titlecolor {color: #0056b3;
         font-style: italic;}
 
         .timefont {
@@ -108,11 +108,24 @@
         .scoreposition {
             float: right;
         }
+
+        .livesfont {
+            color:#7dd0f1 ;
+            font-style: italic;
+            font-weight: bold;
+            font-size: 20px;
+        }
+
+        .livesposition {
+            float: left;
+        }
+
     </style>
 </head>
 <body>
     <div class="container">
         <div id="score" class="scorefont scoreposition">Score: 0</div>
+        <div id="lives" class="livesfont livesposition">Lives: 3</div>
         <h1 class="titlecolor">Figure Skating Tricktionary Challenge</h1>
         <div id="timer" class="timefont">Time: 10</div> <br>
         <div class="visual-area">
@@ -139,6 +152,7 @@
         const feedbackArea = document.getElementById('feedback');
         const nextButton = document.getElementById('next-button');
         const timerDisplay = document.getElementById('timer'); //Get the timer display element (make sure you have this in your HTML)
+        const livesDisplay = document.getElementById('lives'); //Get lives display
 
         const tricks = [
             {
@@ -207,6 +221,7 @@
         let currentTrickIndex = 0;
         let timeLeft = 6; //Set the initial time for each question (in seconds) - adjust as needed
         let timerInterval; //Variable to hold the interval ID
+        let lives = 3; //initialize lives
 
         function startTimer() {
             timeLeft = 6; // Reset the time for the new question
@@ -260,6 +275,15 @@
                 feedbackArea.textContent = `Not quite! The answer was ${tricks[currentTrickIndex].correctAnswer}.`;
                 feedbackArea.className = "feedback-area incorrect";
                 score--;
+                lives--;
+                livesDisplay.textContent = `Lives: ${lives}`;
+                if (lives <= 0) {
+                    feedbackArea.textContent = "Game Over! You ran out of lives.";
+                    options.forEach(button => button.disabled = true);
+                    nextButton.disabled = true; //disable next button
+                    clearInterval(timerInterval);
+                    return; //Stop further processing
+                }
             }   
 
             scoreDisplay.textContent = `Score: ${score}`; // Update the score display
@@ -281,12 +305,17 @@
         });
 
         nextButton.addEventListener('click', () => {
-            currentTrickIndex = (currentTrickIndex + 1) % tricks.length; // Loop through tricks
-            loadTrick();
+            if (lives > 0) {
+                currentTrickIndex = (currentTrickIndex + 1) % tricks.length; // Loop through tricks
+               loadTrick(); 
+            }
+            
+            
         });
 
         // Initial load
         loadTrick();
+        livesDisplay.textContent = `Lives: ${lives}`; // Initial display of lives
     </script>
 </body>
 </html>
