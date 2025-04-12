@@ -183,15 +183,33 @@
                 choices: ["Rotational Lift", "Twizzles", "Stationary Lift", "Triple Twist"],
                 correctAnswer: "Triple Twist"
             },
+            {
+                name: "Layover Camel Spin",
+                visual: "assets/img/layover_camelspin.gif",
+                choices: ["Layover Camel Spin", "Camel Spin", "Twizzles", "Rotational Lift"],
+                correctAnswer: "Layover Camel Spin"
+            },
+            {
+                name: "Loop",
+                visual: "assets/img/loop_jump.gif", 
+                choices: ["Salchow", "Loop", "Lutz", "Flip"],
+                correctAnswer: "Loop"
+            },
+            {
+                name: "Flip",
+                visual: "assets/img/flip_jump.gif", 
+                choices: ["Salchow", "Quad Axel", "Lutz", "Flip"],
+                correctAnswer: "Flip"
+            },
             // Add more tricks here!
         ];
 
         let currentTrickIndex = 0;
-        let timeLeft = 10; //Set the initial time for each question (in seconds) - adjust as needed
+        let timeLeft = 6; //Set the initial time for each question (in seconds) - adjust as needed
         let timerInterval; //Variable to hold the interval ID
 
         function startTimer() {
-            timeLeft = 10; // Reset the time for the new question
+            timeLeft = 6; // Reset the time for the new question
             timerDisplay.textContent = `Time: ${timeLeft}`; // Display initial time
 
             // Clear any existing timer interval
