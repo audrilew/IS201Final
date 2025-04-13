@@ -75,7 +75,7 @@
 
         #next-button {
             padding: 10px 20px;
-            background-color: #153d6f;
+            background-color: #0056b3;
             color: white;
             border: none;
             border-radius: 4px;
@@ -86,6 +86,21 @@
 
         #next-button:hover {
             background-color: #1e7e34;
+        }
+
+        #restart-button:hover {
+            background-color: red;
+        }
+
+        #restart-button {
+            padding: 10px 20px;
+            background-color: #0056b3;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            margin-top: 20px;
         }
 
         .titlecolor {color: #0056b3;
@@ -142,6 +157,7 @@
         <div class="feedback-area" id="feedback"></div>
 
         <button id="next-button">Next Trick</button>
+        <button id="restart-button">Restart Game</button>
     </div>
 
     <script>
@@ -216,19 +232,29 @@
             //     correctAnswer: "Flip"
             // },
             // Add more tricks here!
-            {
-                name: "Step Sequence",
-                visual: "assets/img/step_sequence.gif", // Replace with actual image/GIF path
-                choices: ["Step Sequence", "Twizzles", "Choreo Sequence", "Triple Twist"],
-                correctAnswer: "Step Sequence"
-            },
+            // {
+            //     name: "Step Sequence",
+            //     visual: "assets/img/step_sequence.gif", // Replace with actual image/GIF path
+            //     choices: ["Step Sequence", "Twizzles", "Choreo Sequence", "Triple Twist"],
+            //     correctAnswer: "Step Sequence"
+            // },
         ];
+
+        shuffleArray(tricks); //shuffle the array when the script runs
 
         let currentTrickIndex = 0;
         let timeLeft = 5; //Set the initial time for each question (in seconds) - adjust as needed
         let timerInterval; //Variable to hold the interval ID
         let lives = 3; //initialize lives
         let questionStartTime; //variable to store when the question loaded
+
+        function shuffleArray(array) {
+            for (let i = array.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [array[i], array[j]] = [array[j], array[i]]; // Swap elements
+            }
+}
+
 
         function startTimer() {
             timeLeft = 5; // Reset the time for the new question
@@ -332,6 +358,31 @@
         // Initial load
         loadTrick();
         livesDisplay.textContent = `Lives: ${lives}`; // Initial display of lives
+
+        const restartButton = document.getElementById('restart-button')
+
+        function resetGame() {
+            score = 0;
+            scoreDisplay.textContent = `Score: ${score}`;
+            lives = 3;
+            livesDisplay.textContent = `Lives: ${lives}`;
+            currentTrickIndex = 0;
+            nextButton.disabled = false;
+            feedbackArea.textContent = "";
+            feedbackArea.className = "";
+            options.forEach(button => button.disabled = false);
+            options.forEach(button => button.classList.remove('correct', 'incorrect'));
+            shuffleArray(tricks); // Shuffle the tricks again
+            loadTrick();
+        }
+
+        restartButton.addEventListener('click', resetGame);
+
+        shuffleArray(tricks); // Shuffle on initial load
+        loadTrick();
+        livesDisplay.textContent = `Lives: ${lives}`;
+
+
     </script>
 </body>
 </html>
