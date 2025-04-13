@@ -219,12 +219,13 @@
         ];
 
         let currentTrickIndex = 0;
-        let timeLeft = 6; //Set the initial time for each question (in seconds) - adjust as needed
+        let timeLeft = 5; //Set the initial time for each question (in seconds) - adjust as needed
         let timerInterval; //Variable to hold the interval ID
         let lives = 3; //initialize lives
+        let questionStartTime; //variable to store when the question loaded
 
         function startTimer() {
-            timeLeft = 6; // Reset the time for the new question
+            timeLeft = 5; // Reset the time for the new question
             timerDisplay.textContent = `Time: ${timeLeft}`; // Display initial time
 
             // Clear any existing timer interval
@@ -261,16 +262,25 @@
 
             feedbackArea.textContent = "";
             startTimer();
+            questionStartTime = Date.now(); //record the time when the trick is loaded
         }
 
         function checkAnswer(selectedButton) {
             clearInterval (timerInterval); //Stop the timer when an answer is clicked
             const isCorrect = selectedButton.dataset.answer === "true";
+            const answerTime = Date.now() - questionStartTime; // Calculate time taken in milliseconds
+            const speedBonusThreshold = 2000; // Example: Award bonus if answered within 2 seconds (2000ms)
+            const speedBonusPoints = 5; // Example: Points to award for a fast answer
 
             if (isCorrect) {
                 feedbackArea.textContent = "Correct!" ; 
                 feedbackArea.className = "feedback-area correct" ;
                 score++; //Increment the score for a correct answer//  
+
+                if (answerTime <= speedBonusThreshold) {
+                    score += speedBonusPoints; // Add speed bonus points
+                    feedbackArea.textContent += ` +${speedBonusPoints} Speed Bonus!`; // Indicate the bonus
+                }
             } else {
                 feedbackArea.textContent = `Not quite! The answer was ${tricks[currentTrickIndex].correctAnswer}.`;
                 feedbackArea.className = "feedback-area incorrect";
